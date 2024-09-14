@@ -11,12 +11,16 @@ import {
   Share2Icon,
   UploadIcon,
   ImageIcon,
+  Images,
+  Replace
 } from "lucide-react";
 
 const sidebarItems = [
   { href: "/home", icon: LayoutDashboardIcon, label: "Home Page" },
   { href: "/social-share", icon: Share2Icon, label: "Social Share" },
   { href: "/video-upload", icon: UploadIcon, label: "Video Upload" },
+  { href: "/bg-remove", icon: Images, label: "BG Remove" },
+  { href: "/bg-transform", icon: Replace, label: "BG Transform" },
 ];
 
 export default function AppLayout({
@@ -29,7 +33,6 @@ export default function AppLayout({
   const router = useRouter();
   const { signOut } = useClerk();
   const { user } = useUser();
-  console.log(user)
 
   const handleLogoClick = () => {
     router.push("/");
