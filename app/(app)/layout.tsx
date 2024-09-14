@@ -12,13 +12,15 @@ import {
   UploadIcon,
   ImageIcon,
   Images,
-  Replace
+  Replace,
+  WandSparkles
 } from "lucide-react";
 
 const sidebarItems = [
   { href: "/home", icon: LayoutDashboardIcon, label: "Home Page" },
   { href: "/social-share", icon: Share2Icon, label: "Social Share" },
   { href: "/video-upload", icon: UploadIcon, label: "Video Upload" },
+  { href: "/enhance-image", icon: WandSparkles, label: "Enhance Image" },
   { href: "/bg-remove", icon: Images, label: "BG Remove" },
   { href: "/bg-transform", icon: Replace, label: "BG Transform" },
 ];

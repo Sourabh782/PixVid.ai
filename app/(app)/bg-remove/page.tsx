@@ -2,11 +2,10 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { CldImage } from "next-cloudinary";
-
-
+import { ImageData } from "@/types";
 
 const BgRemove = () => {
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<ImageData | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -45,7 +44,7 @@ const BgRemove = () => {
 
       const data = await res.json();
       console.log(data)
-      setUploadedImage(data.publicId);
+      setUploadedImage(data.data);
     } catch (error) {
       console.log(error);
       alert("Failed to upload image");
@@ -110,9 +109,9 @@ const BgRemove = () => {
                         </div>
                     )}
                     <CldImage
-                        width= {`${500}`}
-                        height= {`${500}`}
-                        src={uploadedImage}
+                        width= {uploadedImage.width}
+                        height= {uploadedImage.height}
+                        src={uploadedImage.public_id}
                         sizes="100vw"
                         alt="transformed image"
                         crop="fill"
@@ -136,9 +135,9 @@ const BgRemove = () => {
                         </div>
                     )}
                     <CldImage
-                        width= {`${500}`}
-                        height= {`${500}`}
-                        src={uploadedImage}
+                        width= {uploadedImage.width}
+                        height= {uploadedImage.height}
+                        src={uploadedImage.public_id}
                         sizes="100vw"
                         alt="transformed image"
                         crop="fill"

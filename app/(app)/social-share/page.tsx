@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { CldImage } from "next-cloudinary";
+import { ImageData } from "@/types";
 
 const socialFormats = {
   "Instagram Square (1:1)": { width: 1080, height: 1080, aspectRatio: "1:1" },
@@ -14,7 +15,7 @@ const socialFormats = {
 type SocialFormat = keyof typeof socialFormats;
 
 const SocialShare = () => {
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<ImageData | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<SocialFormat>(
     "Instagram Square (1:1)"
   );
@@ -53,7 +54,7 @@ const SocialShare = () => {
       }
 
       const data = await res.json();
-      setUploadedImage(data.publicId);
+      setUploadedImage(data.data);
     } catch (error) {
       console.log(error);
       alert("Failed to upload image");
@@ -137,7 +138,7 @@ const SocialShare = () => {
                   <CldImage
                     width={socialFormats[selectedFormat].width}
                     height={socialFormats[selectedFormat].height}
-                    src={uploadedImage}
+                    src={uploadedImage.public_id}
                     sizes="100vw"
                     alt="transformed image"
                     crop="fill"
@@ -145,7 +146,7 @@ const SocialShare = () => {
                     gravity="auto"
                     ref={imageRef}
                     onLoad={() => setIsTransforming(false)}
-                    removeBackground
+                    // removeBackground
                     // replaceBackground="beach with volcano"
                     // replace={['phone', 'soda can']}
                   />

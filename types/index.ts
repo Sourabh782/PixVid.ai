@@ -9,3 +9,9 @@ export interface Video {
     createdAt: Date
     updatedAt: Date
 }
+
+export interface ImageData {
+    public_id: string,
+    width: number,
+    height: number
+}

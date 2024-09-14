@@ -9,7 +9,6 @@ const BgRemove = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [prompt, setPrompt] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -22,7 +21,6 @@ const BgRemove = () => {
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    // setPrompt("")
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -45,7 +43,8 @@ const BgRemove = () => {
       }
 
       const data = await res.json();
-      console.log(data)
+      console.log(data.data);
+      console.log(file.size)
       setUploadedImage(data.data);
     } catch (error) {
       console.log(error);
@@ -64,7 +63,7 @@ const BgRemove = () => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `${prompt ? `${prompt}.png` : "original.png"}`;
+        link.download = `transformed.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -75,7 +74,7 @@ const BgRemove = () => {
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        Image BackGround Transform
+        AI Image Enhancer
       </h1>
 
       <div className="card">
@@ -90,15 +89,6 @@ const BgRemove = () => {
               onChange={handleFileUpload}
               className="file-input file-input-bordered file-input-primary w-full"
             />
-            <label className="form-control w-full mt-4">
-                <div className="label">
-                    <span className="label-text">Enter your Prompt</span>
-                </div>
-                <div className="flex flex-col md:flex-row gap-4">
-                  <input type="text" placeholder="Type here" onChange={(e)=>{ setIsGenerating(true)
-                     setPrompt(e.target.value)}} className="input input-bordered w-full" />
-                </div>
-            </label>
           </div>
 
           {isUploading && (
@@ -157,8 +147,9 @@ const BgRemove = () => {
                         ref={imageRef}
                         onLoad={() => setIsGenerating(false)}
                         // removeBackground
-                        replaceBackground={prompt}
+                        // replaceBackground="beach with volcano"
                         // replace={['phone', 'soda can']}
+                        enhance
                     />
                     </div>
                 </div>
