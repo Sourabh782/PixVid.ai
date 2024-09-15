@@ -1,40 +1,47 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-const isPublicRoute = createRouteMatcher([
-    "/sign-in",
-    "/sign-up",
-    "/",
-    "/home",
-])
+export async function middleware(req: NextRequest){
+    const token = req.cookies.get("token")
 
-const isPublicApiRoute = createRouteMatcher([
-    "/api/videos"
-])
-
-export default clerkMiddleware((auth, req)=>{
-    const {userId} = auth();
     const currUrl = new URL(req.url)
 
     const isHomePage = currUrl.pathname === "/home"
     const isApiRequest = currUrl.pathname.startsWith("/api")
 
-    if(userId && isPublicRoute(req) && !isHomePage){
+    if(token && (
+        currUrl.pathname.startsWith("/signin") || 
+        currUrl.pathname.startsWith("/signup") || 
+        currUrl.pathname.startsWith("/reset-password") 
+    ) && !isHomePage){
         return NextResponse.redirect(new URL("/home", req.url))
     }
 
-    if(!userId){
-        if(!isPublicRoute(req) && !isPublicApiRoute(req)){
-            return NextResponse.redirect(new URL("/sign-in", req.url))
+    if(!token){
+        if(!(
+            currUrl.pathname.startsWith("/signin") || 
+            currUrl.pathname.startsWith("/signup") || 
+            currUrl.pathname.startsWith("/reset-password") 
+        ) && !(
+            currUrl.pathname.startsWith("/api/videos") || 
+            currUrl.pathname.startsWith("/api/signup") || 
+            currUrl.pathname.startsWith("/api/signin") || 
+            currUrl.pathname.startsWith("/api/reset-password")
+        )){
+            return NextResponse.redirect(new URL("/signin", req.url))
         }
 
-        if(isApiRequest && !isPublicApiRoute(req)){
-            return NextResponse.redirect(new URL("/sign-in", req.url))
+        if(isApiRequest && !(
+            currUrl.pathname.startsWith("/api/videos") || 
+            currUrl.pathname.startsWith("/api/signup") || 
+            currUrl.pathname.startsWith("/api/signin") || 
+            currUrl.pathname.startsWith("/api/reset-password")
+        )){
+            return NextResponse.redirect(new URL("/signin", req.url))
         }
     }
 
     return NextResponse.next()
-})
+}
 
 export const config = {
     matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
