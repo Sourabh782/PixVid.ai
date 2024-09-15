@@ -3,13 +3,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CldImage } from "next-cloudinary";
 import { ImageData } from "@/types";
+import { RefreshCcw } from "lucide-react"
 
 const BgRemove = () => {
   const [uploadedImage, setUploadedImage] = useState<ImageData | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [from, setFrom] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
+  const [to, setTo] = useState<string>("");
 
   useEffect(() => {
     if (uploadedImage) {
@@ -21,6 +24,7 @@ const BgRemove = () => {
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    // setPrompt("")
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -62,7 +66,7 @@ const BgRemove = () => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `transformed.png`;
+        link.download = `${prompt ? `${prompt}.png` : "original.png"}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -73,7 +77,7 @@ const BgRemove = () => {
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        Image BackGround Remover
+        Image BackGround Transform
       </h1>
 
       <div className="card">
@@ -87,10 +91,28 @@ const BgRemove = () => {
               type="file"
               onChange={handleFileUpload}
               className="file-input file-input-bordered file-input-primary w-full"
-              disabled
             />
+            <div className="flex flex-col md:flex-row gap-8">
+                <label className="form-control w-full md:w-1/2 mt-4">
+                    <div className="label">
+                        <span className="label-text">From</span>
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-4">
+                    <input type="text" placeholder="Enter prompt to see result" onChange={(e)=>{ setIsGenerating(true)
+                        setFrom(e.target.value)}} className="input input-bordered w-full" />
+                    </div>
+                </label>
+                <label className="form-control w-full md:w-1/2 mt-4">
+                    <div className="label">
+                        <span className="label-text">To</span>
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-4">
+                    <input type="text" placeholder="Enter prompt to see result" onChange={(e)=>{ setIsGenerating(true)
+                        setTo(e.target.value)}} className="input input-bordered w-full" />
+                    </div>
+                </label>
+            </div>
           </div>
-          <span>Disabled cause max free Removal done</span>
 
           {isUploading && (
             <div className="mt-4">
@@ -102,7 +124,7 @@ const BgRemove = () => {
             <div className="mt-6">
               
               <div className="flex flex-col md:flex-row ">
-                <div className="mt-6 relative mr-2 w-full md:w-1/2">
+                <div className="mt-6 relative md:mr-2 w-full md:w-1/2">
                     <h3 className="text-lg font-semibold mb-2">Preview:</h3>
                     <div className="flex justify-center">
                     {isTransforming && (
@@ -121,11 +143,14 @@ const BgRemove = () => {
                         gravity="auto"
                         ref={imageRef}
                         onLoad={() => setIsTransforming(false)}
+                        // removeBackground
+                        // replaceBackground="beach with volcano"
+                        // replace={['phone', 'soda can']}
                     />
                     </div>
                 </div>
 
-                <div className="mt-6 relative ml-2  w-full md:w-1/2">
+                <div className="mt-6 relative md:ml-2 w-full md:w-1/2">
                     <h3 className="text-lg font-semibold mb-2">Result:</h3>
                     <div className="flex justify-center">
                     {isGenerating && (
@@ -144,7 +169,14 @@ const BgRemove = () => {
                         gravity="auto"
                         ref={imageRef}
                         onLoad={() => setIsGenerating(false)}
-                        removeBackground
+                        // removeBackground
+                        // replaceBackground={{prompt: prompt, seed: seed}}
+                        // seed=3
+                        replace={{
+                            from: from,
+                            to: to,
+                            // preserveGeometry: true
+                        }}
                     />
                     </div>
                 </div>

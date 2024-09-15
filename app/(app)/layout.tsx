@@ -12,18 +12,22 @@ import {
   ImageIcon,
   Images,
   Replace,
-  WandSparkles
+  WandSparkles,
+  Dna,
+  Clapperboard
 } from "lucide-react";
 import axios from "axios";
 import UserContext from "@/context/UserContext";
+import { useToast } from "@/hooks/use-toast";
 
 const sidebarItems = [
-  { href: "/home", icon: LayoutDashboardIcon, label: "Home Page" },
+  { href: "/home", icon: Clapperboard, label: "Videos" },
   { href: "/social-share", icon: Share2Icon, label: "Social Share" },
   { href: "/video-upload", icon: UploadIcon, label: "Video Upload" },
   { href: "/enhance-image", icon: WandSparkles, label: "Enhance Image" },
   { href: "/bg-remove", icon: Images, label: "BG Remove" },
   { href: "/bg-transform", icon: Replace, label: "BG Transform" },
+  { href: "/item-replace", icon: Dna, label: "Item Replace" },
 ];
 
 export default function AppLayout({
@@ -35,6 +39,7 @@ export default function AppLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [username, setUsername] = useState("");
+  const { toast } = useToast()
 
   const {user} = useContext(UserContext)
   useEffect(()=>{
@@ -48,6 +53,12 @@ export default function AppLayout({
   const handleSignOut = async () => {
     localStorage.removeItem("username")
     const res = await axios.post("/api/logout")
+    toast({
+      title: "logged out",
+      description: "logged out successfully",
+      variant: "default"
+    })
+
     router.push("/signin")
   };
 
@@ -84,12 +95,12 @@ export default function AppLayout({
                 <>
                   <div className="avatar">
                     <div className="w-8 h-8 rounded-full">
-                      <img
+                      {/* <img
                         src={""}
                         alt={
                           "image"
                         }
-                      />
+                      /> */}
                     </div>
                   </div>
                   <span className="text-sm truncate max-w-xs lg:max-w-md">

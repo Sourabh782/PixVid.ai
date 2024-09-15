@@ -1,6 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { PrismaClient } from '@prisma/client';
 import { getDataFromToken } from '@/helper/getDataFromToken';
 
@@ -33,9 +32,6 @@ export async function POST(request: NextRequest){
                 status: 500
             })
         }
-    
-        const {userId} = auth();
-        
     
         if(!token){
             return NextResponse.json({

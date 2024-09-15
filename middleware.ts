@@ -7,13 +7,15 @@ const isPublicRoute = createRouteMatcher([
     // "/",
     // "/home",
     "/signin",
-    "/signup"
+    "/signup",
+    "/reset-password"
 ])
 
 const isPublicApiRoute = createRouteMatcher([
     "/api/videos",
     "/api/signup",
     "/api/signin",
+    "/api/reset-password"
 ])
 
 export async function middleware(req: NextRequest){

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link"
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -9,47 +9,43 @@ import { Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Label } from "@/components/ui/label"
 import axios from "axios"
-import UserContext from "@/context/UserContext"
 
 const Page = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("")
-
-  const {user, setUser} = useContext(UserContext)
+  const [email, setEmail] = useState("");
 
   const { toast } = useToast();
   const router = useRouter();
-  
+
   const onSubmit = async ()=>{
     try {
         setIsSubmitting(true)
         const data = {
+            email: email.toLowerCase(),
             username: username.toLowerCase(),
             password
         }
-        const res = await axios.post("/api/signin", data)
-    
-        setUser(res.data.data)
-        
-        localStorage.setItem("username", res.data.data)
+        const res = await axios.post("/api/reset-password", data)
+        console.log(res)
 
         toast({
-            title: "Success",
-            description: "LoggedIn successfully",
+            title: "Password Reset Successfully",
+            description: "Use new password to signin",
             variant: "default"
         })
 
         if(res.data){
-          router.replace("/home")
+            router.replace("/signin")
         }
     
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+        console.log(error.response.data)
         toast({
             title: "Login Failed",
-            description: "Incorrect credentials",
+            description: `${error.response.data.message}`,
             variant: "destructive"
         })
     } finally {
@@ -61,8 +57,13 @@ const Page = () => {
     <div className="flex justify-center items-center min-h-screen bg-slate-900">
       <div className="w-full max-w-md p-8 space-y-8 bg-gray-800 rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">Join PixVid.ai</h1>
-          <p className="mb-4">Sign in to Play with media.</p>
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">PixVid.ai</h1>
+          <p className="mb-4">Reset your password</p>
+        </div>
+
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label htmlFor="email">Email :</Label>
+            <Input type="email" id="email" placeholder="@email" onChange={(e)=>setEmail(e.target.value)} />
         </div>
 
         <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -71,10 +72,7 @@ const Page = () => {
         </div>
 
         <div className="grid w-full max-w-sm items-center gap-1.5">
-            <div className="flex justify-between">
-              <Label htmlFor="password">Password :</Label>
-              <Link href="/reset-password" className="text-[12px] hover:text-blue-600">Forgot your password ?</Link>
-            </div>
+            <Label htmlFor="password">New password :</Label>
             <Input type="password" id="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)} />
         </div>
 
@@ -82,14 +80,14 @@ const Page = () => {
             {
                 isSubmitting ? <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                </> : ("Sign In")
+                </> : ("Reset password")
             }
         </Button>
 
         <div className="text-center mt-4">
           <p>
-            Dont have an account?
-            <Link href="/signup" className="text-blue-600 hover:text-blue-800"> Create Now </Link>
+            Already have account?
+            <Link href="/signin" className="text-blue-600 hover:text-blue-800"> Sign In </Link>
           </p>
         </div>
       </div>

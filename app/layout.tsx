@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster"
 import UserContextProvider from "@/context/userContextProvider";
@@ -10,6 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "PixVid.ai",
   description: "An app to play around pictures and videos",
+  
 };
 
 export default function RootLayout({
@@ -26,8 +26,8 @@ export default function RootLayout({
           <main>
             {children}
           </main>
+          <Toaster />
         </UserContextProvider>
-        <Toaster />
       </body>
     </html>
   );

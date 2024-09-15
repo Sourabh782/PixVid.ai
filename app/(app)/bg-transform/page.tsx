@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CldImage } from "next-cloudinary";
 import { ImageData } from "@/types";
+import { RefreshCcw } from "lucide-react"
 
 const BgRemove = () => {
   const [uploadedImage, setUploadedImage] = useState<ImageData | null>(null);
@@ -11,6 +12,7 @@ const BgRemove = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [prompt, setPrompt] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
+  const [seed, setSeed] = useState<number>(1);
 
   useEffect(() => {
     if (uploadedImage) {
@@ -55,6 +57,13 @@ const BgRemove = () => {
     }
   };
 
+  const seedRandomizer = () => {
+    setIsGenerating(true)
+    let num = (seed+1 + Math.floor(Math.random()*10))%10
+    console.log(num)
+    setSeed(num)
+  }
+
   const handleDownload = () => {
     if (!imageRef.current) return;
 
@@ -95,7 +104,7 @@ const BgRemove = () => {
                     <span className="label-text">Enter your Prompt</span>
                 </div>
                 <div className="flex flex-col md:flex-row gap-4">
-                  <input type="text" placeholder="Type here" onChange={(e)=>{ setIsGenerating(true)
+                  <input type="text" placeholder="Enter prompt to see result" onChange={(e)=>{ setIsGenerating(true)
                      setPrompt(e.target.value)}} className="input input-bordered w-full" />
                 </div>
             </label>
@@ -157,7 +166,8 @@ const BgRemove = () => {
                         ref={imageRef}
                         onLoad={() => setIsGenerating(false)}
                         // removeBackground
-                        replaceBackground={prompt}
+                        replaceBackground={{prompt: prompt, seed: seed}}
+                        // seed=3
                         // replace={['phone', 'soda can']}
                     />
                     </div>
@@ -165,6 +175,9 @@ const BgRemove = () => {
               </div>
 
               <div className="card-actions justify-end mt-6">
+                <button className="btn btn-primary" onClick={seedRandomizer}>
+                  <RefreshCcw />
+                </button>
                 <button className="btn btn-primary" onClick={handleDownload}>
                   Download
                 </button>
