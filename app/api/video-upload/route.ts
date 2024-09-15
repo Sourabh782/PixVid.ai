@@ -2,6 +2,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { PrismaClient } from '@prisma/client';
+import { getDataFromToken } from '@/helper/getDataFromToken';
 
 const prisma = new PrismaClient()
 
@@ -23,6 +24,7 @@ interface CloudinaryUploadResult{
 export async function POST(request: NextRequest){
 
     try {
+        const token = await getDataFromToken(request);
         if(!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET){
             return NextResponse.json({
                 success: false,
@@ -33,8 +35,9 @@ export async function POST(request: NextRequest){
         }
     
         const {userId} = auth();
+        
     
-        if(!userId){
+        if(!token){
             return NextResponse.json({
                 success: false,
                 error: "Unauthorized"
@@ -93,9 +96,24 @@ export async function POST(request: NextRequest){
                 publicId: result.public_id,
                 originalSize,
                 compressedSize: String(result.bytes),
-                duration: (result.duration) || 0
+                duration: (result.duration) || 0,
+                user: {
+                    connect: {
+                        id: token
+                    }
+                }
             }
         })
+        
+
+        const user = await prisma.user.update({
+            where: { id: token },
+            data: {
+                videoIds: {
+                    push: video.id
+                }
+            }
+        });
 
         return NextResponse.json({
             success: true,
@@ -104,11 +122,11 @@ export async function POST(request: NextRequest){
             status: 200
         })
 
-    } catch (error) {
-        console.log("Uploading video failed" ,error)
+    } catch (error: any) {
+        console.log(error.message)
         return NextResponse.json({
             success: false,
-            error: "Uploading image failed"
+            error: "Uploading video failed"
         }, {
             status: 500
         })

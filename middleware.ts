@@ -9,7 +9,10 @@ const isPublicRoute = createRouteMatcher([
 ])
 
 const isPublicApiRoute = createRouteMatcher([
-    "/api/videos"
+    "/api/videos",
+    "/api/signup",
+    "/api/signin",
+    "/api/video-upload"
 ])
 
 export default clerkMiddleware((auth, req)=>{
