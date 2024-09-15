@@ -59,7 +59,7 @@ const BgRemove = () => {
 
   const seedRandomizer = () => {
     setIsGenerating(true)
-    let num = (seed+1 + Math.floor(Math.random()*10))%10
+    const num = (seed+1 + Math.floor(Math.random()*10))%10
     console.log(num)
     setSeed(num)
   }
