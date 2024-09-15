@@ -111,7 +111,7 @@ const BgRemove = () => {
             <div className="mt-6">
               
               <div className="flex flex-col md:flex-row ">
-                <div className="mt-6 relative mr-2 w-full md:w-1/2">
+                <div className="mt-6 relative md:mr-2 w-full md:w-1/2">
                     <h3 className="text-lg font-semibold mb-2">Preview:</h3>
                     <div className="flex justify-center">
                     {isTransforming && (
@@ -137,7 +137,7 @@ const BgRemove = () => {
                     </div>
                 </div>
 
-                <div className="mt-6 relative ml-2  w-full md:w-1/2">
+                <div className="mt-6 relative md:ml-2 w-full md:w-1/2">
                     <h3 className="text-lg font-semibold mb-2">Result:</h3>
                     <div className="flex justify-center">
                     {isGenerating && (

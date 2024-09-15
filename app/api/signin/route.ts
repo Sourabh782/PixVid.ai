@@ -55,7 +55,8 @@ export async function POST(request: NextRequest){
 
         const response = NextResponse.json({
             success: true,
-            message: "Logged in successfully"
+            message: "Logged in successfully",
+            data: tokenData.username
         }, {
             status: 200
         })
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest){
             httpOnly: true,
             secure: true
         })
+        
 
         return response
         
