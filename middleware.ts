@@ -11,6 +11,7 @@ export async function middleware(req: NextRequest){
     if(token && (
         currUrl.pathname.startsWith("/signin") || 
         currUrl.pathname.startsWith("/signup") || 
+        currUrl.pathname === "/" || 
         currUrl.pathname.startsWith("/reset-password") 
     ) && !isHomePage){
         return NextResponse.redirect(new URL("/home", req.url))
