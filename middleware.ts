@@ -1,22 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server';
-import { getDataFromToken } from './helper/getDataFromToken';
-import jwt from 'jsonwebtoken';
-
-const isPublicRoute = createRouteMatcher([
-    // "/",
-    // "/home",
-    "/signin",
-    "/signup",
-    "/reset-password"
-])
-
-const isPublicApiRoute = createRouteMatcher([
-    "/api/videos",
-    "/api/signup",
-    "/api/signin",
-    "/api/reset-password"
-])
 
 export async function middleware(req: NextRequest){
     const token = req.cookies.get("token")
@@ -26,16 +8,34 @@ export async function middleware(req: NextRequest){
     const isHomePage = currUrl.pathname === "/home"
     const isApiRequest = currUrl.pathname.startsWith("/api")
 
-    if(token && isPublicRoute(req) && !isHomePage){
+    if(token && (
+        currUrl.pathname.startsWith("/signin") || 
+        currUrl.pathname.startsWith("/signup") || 
+        currUrl.pathname.startsWith("/reset-password") 
+    ) && !isHomePage){
         return NextResponse.redirect(new URL("/home", req.url))
     }
 
     if(!token){
-        if(!isPublicRoute(req) && !isPublicApiRoute(req)){
+        if(!(
+            currUrl.pathname.startsWith("/signin") || 
+            currUrl.pathname.startsWith("/signup") || 
+            currUrl.pathname.startsWith("/reset-password") 
+        ) && !(
+            currUrl.pathname.startsWith("/api/videos") || 
+            currUrl.pathname.startsWith("/api/signup") || 
+            currUrl.pathname.startsWith("/api/signin") || 
+            currUrl.pathname.startsWith("/api/reset-password")
+        )){
             return NextResponse.redirect(new URL("/signin", req.url))
         }
 
-        if(isApiRequest && !isPublicApiRoute(req)){
+        if(isApiRequest && !(
+            currUrl.pathname.startsWith("/api/videos") || 
+            currUrl.pathname.startsWith("/api/signup") || 
+            currUrl.pathname.startsWith("/api/signin") || 
+            currUrl.pathname.startsWith("/api/reset-password")
+        )){
             return NextResponse.redirect(new URL("/signin", req.url))
         }
     }
