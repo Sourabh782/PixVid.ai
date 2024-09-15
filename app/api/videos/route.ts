@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
+import { getDataFromToken } from "@/helper/getDataFromToken";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest){
     try {
+        const token = await getDataFromToken(request)
         const videos = await prisma.video.findMany({
+            where: {
+                userId: token
+            },
             orderBy: {
                 createdAt: "desc"
             }
@@ -17,7 +22,7 @@ export async function GET(request: NextRequest){
         }, {
             status: 200
         })
-    } catch (error) {
+    } catch (error: any) {
         return NextResponse.json({
             success: false,
             error: "Error fetching Videos"

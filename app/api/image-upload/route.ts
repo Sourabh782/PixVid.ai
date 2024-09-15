@@ -2,6 +2,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { PrismaClient } from '@prisma/client';
+import { getDataFromToken } from '@/helper/getDataFromToken';
 
 const prisma = new PrismaClient()
 
@@ -19,9 +20,9 @@ interface CloudinaryUploadResult{
 }
 
 export async function POST(request: NextRequest){
-    const {userId} = auth();
+    const token = await getDataFromToken(request);
 
-    if(!userId){
+    if(!token){
         return NextResponse.json({
             success: false,
             error: "Unauthorized"
