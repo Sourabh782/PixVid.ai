@@ -1,40 +1,47 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { getDataFromToken } from './helper/getDataFromToken';
+import jwt from 'jsonwebtoken';
 
 const isPublicRoute = createRouteMatcher([
-    "/sign-in",
-    "/sign-up",
-    "/",
-    "/home",
+    // "/",
+    // "/home",
+    "/signin",
+    "/signup",
+    "/reset-password"
 ])
 
 const isPublicApiRoute = createRouteMatcher([
-    "/api/videos"
+    "/api/videos",
+    "/api/signup",
+    "/api/signin",
+    "/api/reset-password"
 ])
 
-export default clerkMiddleware((auth, req)=>{
-    const {userId} = auth();
+export async function middleware(req: NextRequest){
+    const token = req.cookies.get("token")
+
     const currUrl = new URL(req.url)
 
     const isHomePage = currUrl.pathname === "/home"
     const isApiRequest = currUrl.pathname.startsWith("/api")
 
-    if(userId && isPublicRoute(req) && !isHomePage){
+    if(token && isPublicRoute(req) && !isHomePage){
         return NextResponse.redirect(new URL("/home", req.url))
     }
 
-    if(!userId){
+    if(!token){
         if(!isPublicRoute(req) && !isPublicApiRoute(req)){
-            return NextResponse.redirect(new URL("/sign-in", req.url))
+            return NextResponse.redirect(new URL("/signin", req.url))
         }
 
         if(isApiRequest && !isPublicApiRoute(req)){
-            return NextResponse.redirect(new URL("/sign-in", req.url))
+            return NextResponse.redirect(new URL("/signin", req.url))
         }
     }
 
     return NextResponse.next()
-})
+}
 
 export const config = {
     matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],

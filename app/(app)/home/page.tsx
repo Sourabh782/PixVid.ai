@@ -1,13 +1,17 @@
 "use client";
 import VideoCard from "@/components/VideoCard";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Video } from "@/types";
+import UserContext from "@/context/UserContext";
 
 const Home = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // const {user} = useUser();
+  // console.log(user)
+  const {user, setUser} = useContext(UserContext)
 
   const fetchVideos = useCallback(async () => {
     try {

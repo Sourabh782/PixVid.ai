@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useClerk, useUser } from "@clerk/nextjs";
 import {
   LogOutIcon,
   MenuIcon,
@@ -13,16 +12,22 @@ import {
   ImageIcon,
   Images,
   Replace,
-  WandSparkles
+  WandSparkles,
+  Dna,
+  Clapperboard
 } from "lucide-react";
+import axios from "axios";
+import UserContext from "@/context/UserContext";
+import { useToast } from "@/hooks/use-toast";
 
 const sidebarItems = [
-  { href: "/home", icon: LayoutDashboardIcon, label: "Home Page" },
+  { href: "/home", icon: Clapperboard, label: "Videos" },
   { href: "/social-share", icon: Share2Icon, label: "Social Share" },
   { href: "/video-upload", icon: UploadIcon, label: "Video Upload" },
   { href: "/enhance-image", icon: WandSparkles, label: "Enhance Image" },
   { href: "/bg-remove", icon: Images, label: "BG Remove" },
   { href: "/bg-transform", icon: Replace, label: "BG Transform" },
+  { href: "/item-replace", icon: Dna, label: "Item Replace" },
 ];
 
 export default function AppLayout({
@@ -33,15 +38,28 @@ export default function AppLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { signOut } = useClerk();
-  const { user } = useUser();
+  const [username, setUsername] = useState("");
+  const { toast } = useToast()
+
+  const {user} = useContext(UserContext)
+  useEffect(()=>{
+    setUsername(localStorage.getItem("username") || "")
+  },[])
 
   const handleLogoClick = () => {
     router.push("/");
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    localStorage.removeItem("username")
+    const res = await axios.post("/api/logout")
+    toast({
+      title: "logged out",
+      description: "logged out successfully",
+      variant: "default"
+    })
+
+    router.push("/signin")
   };
 
   return (
@@ -77,25 +95,25 @@ export default function AppLayout({
                 <>
                   <div className="avatar">
                     <div className="w-8 h-8 rounded-full">
-                      <img
-                        src={user.imageUrl}
+                      {/* <img
+                        src={""}
                         alt={
-                          user.username || user.emailAddresses[0].emailAddress
+                          "image"
                         }
-                      />
+                      /> */}
                     </div>
                   </div>
                   <span className="text-sm truncate max-w-xs lg:max-w-md">
-                    {user.username || user.emailAddresses[0].emailAddress}
+                    {username}
                   </span>
+                </>
+              )}
                   <button
                     onClick={handleSignOut}
                     className="btn btn-ghost btn-circle"
                   >
                     <LogOutIcon className="h-6 w-6" />
                   </button>
-                </>
-              )}
             </div>
           </div>
         </header>
@@ -110,7 +128,7 @@ export default function AppLayout({
         <label htmlFor="sidebar-drawer" className="drawer-overlay"></label>
         <aside className="bg-base-200 w-64 h-full flex flex-col">
           <div className="flex items-center justify-center py-4">
-            <ImageIcon className="w-10 h-10 text-primary" />
+            <ImageIcon className="w-10 h-10 text-blue-600" />
           </div>
           <ul className="menu p-4 w-full text-base-content flex-grow">
             {sidebarItems.map((item) => (
@@ -130,7 +148,8 @@ export default function AppLayout({
               </li>
             ))}
           </ul>
-          {user && (
+          {(
+          // {user && (
             <div className="p-4">
               <button
                 onClick={handleSignOut}

@@ -8,6 +8,7 @@ export interface Video {
     duration: number
     createdAt: Date
     updatedAt: Date
+    userId: string
 }
 
 export interface ImageData {

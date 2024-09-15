@@ -17,7 +17,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onDownload }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [previewError, setPreviewError] = useState(false);
 
-  console.log(video)
+  // console.log(video)
 
   const getThumbnailUrl = useCallback((publicId: string) => {
     return getCldImageUrl({
@@ -52,7 +52,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onDownload }) => {
   const formatSize = useCallback((size: number) => {
     return filesize(size);
   }, []);
-  console.log(getPreviewVideoUrl(video.publicId))
+  // console.log(getPreviewVideoUrl(video.publicId))
 
   const formatDuration = useCallback((seconds: number) => {
     const minutes = Math.floor(seconds / 60);
