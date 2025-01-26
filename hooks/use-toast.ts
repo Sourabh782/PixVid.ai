@@ -81,7 +81,7 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
       }
-
+ 
     case "UPDATE_TOAST":
       return {
         ...state,
